@@ -39,6 +39,10 @@ var instructions = new UI.Text({
 main.add(instructions);
 main.show();
 
+main.on('click', 'up', function(e) {
+  // TODO: add a control for sensitivity 100,200,400,800
+});
+
 main.on('click', 'down', function(e) {
   var card = new UI.Card({
     scrollable: true
@@ -53,6 +57,7 @@ main.on('click', 'select', function(e) {
   if (running) {
     running = false;
   } else {
+    // TODO: add a visual indicator to show running status
     running = true;
     x = tempx;
     y = tempy;
@@ -61,6 +66,9 @@ main.on('click', 'select', function(e) {
 });
 
 function checkForSlouchOnAxis(value, stored){
+  
+  // TODO: add a timeout so that we don't detect slouches every second, save battery.
+  
   if (value > stored+sensitivity){
     return true;
   }
@@ -73,10 +81,13 @@ function checkForSlouchOnAxis(value, stored){
 Accel.init();
 Accel.config({
   rate:10,
-  samples:8,
+  samples:20,
   subscribe:true
 });
 Accel.on('data', function(e) {
+  
+  // TODO: wait till first accel before enabling start button.
+  
   tempx = e.accel.x;
   tempy = e.accel.y;
   tempz = e.accel.z;
