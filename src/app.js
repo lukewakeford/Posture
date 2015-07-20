@@ -6,10 +6,15 @@ var UI = require('ui');
 var Vector2 = require('vector2');
 var Accel = require('ui/accel');
 
+var tempx = 0;
+var tempy = 0;
+var tempz = 0;
 var x = 0;
 var y = 0;
 var z = 0;
 var sensitivity = 200;
+
+var running = false;
 
 var main = new UI.Window({
   fullscreen: true,
@@ -45,7 +50,25 @@ main.on('click', 'down', function(e) {
 
 main.on('click', 'select', function(e) {
   UI.Vibe.vibrate('short');
+  if (running) {
+    running = false;
+  } else {
+    running = true;
+    x = tempx;
+    y = tempy;
+    z = tempz;
+  }
 });
+
+function checkForSlouchOnAxis(value, stored){
+  if (value > stored+sensitivity){
+    return true;
+  }
+  if (value < stored-sensitivity) {
+    return true;
+  }
+  return false;
+}
 
 Accel.init();
 Accel.config({
@@ -54,5 +77,22 @@ Accel.config({
   subscribe:true
 });
 Accel.on('data', function(e) {
-  console.log('x: '+e.accel.x+' y: '+e.accel.y+' z: '+e.accel.z);
+  tempx = e.accel.x;
+  tempy = e.accel.y;
+  tempz = e.accel.z;
+  
+  if (running) {
+    if (checkForSlouchOnAxis(tempx, x)) {
+      UI.Vibe.vibrate('double');
+      return;
+    }
+    if (checkForSlouchOnAxis(tempy, y)) {
+      UI.Vibe.vibrate('double');
+      return;
+    }
+    if (checkForSlouchOnAxis(tempz, z)) {
+      UI.Vibe.vibrate('double');
+      return;
+    }
+  }
 });
